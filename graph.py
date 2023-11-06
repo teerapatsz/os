@@ -12,13 +12,14 @@ boost = input("enter : ")
 ioTime = input("enter : ")
 if (job == '') or (iquantum == '') or (iallotment == '') or (boost == '') or (ioTime == '') :
     x=mlfq_multicore()
-    job = 3
+    jobs = 3
 else :
-    x=mlfq_multicore(job,iquantum,iallotment,boost,ioTime)
+    x=mlfq_multicore(int(job),int(iquantum),int(iallotment),int(boost),int(ioTime))
+    jobs = int(job)
 
 # x=mlfq_multicore(job)
 
-for i in range (0,job):
+for i in range (0,jobs):
     timeCPU = x[0][i]['runTime']
     #timeCPU=x[1][i]['currTimeCore']
     task_times.append(timeCPU)

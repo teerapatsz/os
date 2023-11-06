@@ -5,7 +5,7 @@ from multicoremlfqs import *
 #นับจำนวนงานและเก็บไว้ในarray task_times
 task_times=[]
 timeCPU = 0
-job,iquantun,iallotment,boost,ioTime = input("enter : ").split()
+job,iquantun,iallotment,boost,ioTime = int(input("enter : ").split())
 x=mlfq_multicore(job)
 
 for i in range (0,job):

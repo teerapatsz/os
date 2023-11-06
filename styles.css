@@ -3,7 +3,6 @@
 header {
     align-items: center ;
     background-color: #24252A;
-    margin-bottom: 100px;
 }
 p {
     font-size: 50px ;
@@ -13,6 +12,11 @@ p {
     font-family: Pixelify Sans;
 }
 body {
-    background-color: white;
+    background-color: black;
 }
 
+.py-terminal {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+}

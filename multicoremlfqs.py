@@ -1,6 +1,7 @@
-from __future__ import print_function
+
 import random
 import sys
+import os
 
 def random_seed(seed) :
     try:
@@ -23,7 +24,7 @@ def Abort(str) :
     sys.stderr.write(str+'\n')
     exit(1)
 
-def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
+def mlfq_multicore1(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
     seed = 0
     maxlen = 100
     maxio = 10
@@ -108,11 +109,11 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
     indcore = 0
     count = 0
     countcore = 1
-    print('Job List:')
-    for i in range(numJobs):
-        print('  Job %2d: startTime %3d - runTime %3d - ioFreq %3d' % (i, job[i]['startTime'], job[i]['runTime'], job[i]['ioFreq']))
-    print('')
-    print('\nExecution Trace:\n')
+    # print('Job List:')
+    # for i in range(numJobs):
+        # print('  Job %2d: startTime %3d - runTime %3d - ioFreq %3d' % (i, job[i]['startTime'], job[i]['runTime'], job[i]['ioFreq']))
+    # print('')
+    # print('\nExecution Trace:\n')
     #Execution Trace
     for j in range(1,len(job)+1) :
         if j <= numCores :
@@ -146,7 +147,7 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
                     countcore = 1
             if boost > 0 and currTime != 0 :
                 if currTime % boost == 0 :
-                    print('[ core %d  ] BOOST ( every %d )' % (currCore, boost))
+                    # print('[ core %d  ] BOOST ( every %d )' % (currCore, boost))
                     # remove all jobs from queues (except high queue) and put them in high queue
                     for q in range(numQueues-1):
                         for j in queue[q]:
@@ -164,14 +165,14 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
                             job[j]['currPri']   = hiQueue
                             job[j]['ticksLeft'] = quantum[hiQueue]
                             job[j]['allotLeft'] = allotment[hiQueue]
-                            print('  BOOST', j, ' ticks:', job[j]['ticksLeft'], ' allot:', job[j]['allotLeft'])
+                            # print('  BOOST', j, ' ticks:', job[j]['ticksLeft'], ' allot:', job[j]['allotLeft'])
                     # print('BOOST END: QUEUES look like:', queue)
             # check for any I/Os done
             if currTime in ioDone:
                 for (j, type) in ioDone[currTime]:
                     q = job[j]['currPri']
                     job[j]['doingIO'] = False
-                    print('[ time %d ] %s by JOB %d' % (currTime, type, j))
+                    # print('[ time %d ] %s by JOB %d' % (currTime, type, j))
                     if iobump == False or type == 'JOB BEGINS':
                         queue[q].append(j)
                     else:
@@ -179,7 +180,7 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
             # now find the highest priority job
             currQueue = FindQueue(hiQueue,queue)
             if currQueue == -1:
-                print(' IDLE' )
+                # print(' IDLE' )
                 currTime += 1
                 continue
 
@@ -198,8 +199,8 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
             ticksLeft = job[currJob]['ticksLeft']
             allotLeft = job[currJob]['allotLeft']
             timeLeft  = job[currJob]['timeLeft']
-            print('[ core %d | time %d ] Run JOB %d at PRIORITY %d [ TICKS %d ALLOT %d TIME %d (of %d) ]' % \
-            (currCore,currTimeCore[currCore], currJob, currQueue, ticksLeft, allotLeft, timeLeft, runTime))
+            # print('[ core %d | time %d ] Run JOB %d at PRIORITY %d [ TICKS %d ALLOT %d TIME %d (of %d) ]' % \
+            # (currCore,currTimeCore[currCore], currJob, currQueue, ticksLeft, allotLeft, timeLeft, runTime))
 
             if timeLeft < 0:
                 Abort('Error: should never have less than 0 time left to run')
@@ -222,7 +223,7 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
 
             # CHECK FOR JOB ENDING
             if timeLeft == 0:
-                print('[ core %d  ] FINISHED JOB %d' % (currCore, currJob))
+                # print('[ core %d  ] FINISHED JOB %d' % (currCore, currJob))
                 finishedJobs += 1
                 job[currJob]['endTime'] = currTime
                 # print('BEFORE POP', queue)
@@ -235,7 +236,7 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
             issuedIO = False
             if ioFreq > 0 and (((runTime - timeLeft) % ioFreq) == 0):
                 # time for an IO!
-                print(' IO_START by JOB %d' % ( currJob))
+                # print(' IO_START by JOB %d' % ( currJob))
                 issuedIO = True
                 desched = queue[currQueue].pop(0)
                 assert(desched == currJob)
@@ -248,7 +249,7 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
                 futureTime = currTime + ioTime
                 if futureTime not in ioDone:
                     ioDone[futureTime] = []
-                print('IO DONE')
+                # print('IO DONE')
                 ioDone[futureTime].append((currJob, 'IO_DONE'))
 
             # CHECK FOR QUANTUM ENDING AT THIS LEVEL (BUT REMEMBER, THERE STILL MAY BE ALLOTMENT LEFT)
@@ -281,17 +282,16 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
                         queue[currQueue].append(currJob)
         countcore+=1
     # print out statistics
-    print('')
-    print('Final statistics:')
-    responseSum   = 0
-    turnaroundSum = 0
-    for i in range(numJobs):
-        response   = (job[i]['firstRun']) - (job[i]['startTime'])
-        turnaround = (job[i]['endTime'] )- (job[i]['startTime'])
-        print('  Job %2d: startTime %3d - response %3d - turnaround %3d' % (i, job[i]['startTime'], response, turnaround))
-        responseSum   += response
-        turnaroundSum += turnaround
+    # print('')
+    # print('Final statistics:')
+    # responseSum   = 0
+    # turnaroundSum = 0
+    # for i in range(numJobs):
+    #     response   = (job[i]['firstRun']) - (job[i]['startTime'])
+    #     turnaround = (job[i]['endTime'] )- (job[i]['startTime'])
+    #     print('  Job %2d: startTime %3d - response %3d - turnaround %3d' % (i, job[i]['startTime'], response, turnaround))
+    #     responseSum   += response
+    #     turnaroundSum += turnaround
 
-    print('\n  Avg %2d: startTime n/a - response %.2f - turnaround %.2f' % (i, float(responseSum)/numJobs, float(turnaroundSum)/numJobs))
-    print('\n')
+    # print('\n')
     return (job,cores)
