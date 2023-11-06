@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&family=Raleway:wght@100&family=Roboto:wght@100&family=Teko&display=swap');
+
+header {
+    align-items: center ;
+    background-color: #24252A;
+    margin-bottom: 100px;
+}
+p {
+    font-size: 50px ;
+    text-align: center;
+    color: aliceblue;
+    font-weight: bold;
+    font-family: Pixelify Sans;
+}
+body {
+    background-color: white;
+}
+
