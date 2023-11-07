@@ -108,7 +108,7 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
     indcore = 0
     count = 0
     countcore = 1
-    print('Job List:')
+    print('\nJob List:')
     for i in range(numJobs):
         print('  Job %2d: startTime %3d - runTime %3d - ioFreq %3d' % (i, job[i]['startTime'], job[i]['runTime'], job[i]['ioFreq']))
     print('')
@@ -157,15 +157,15 @@ def mlfq_multicore(numJobs=3,iquantum=10,iallotment=1,boost=0,ioTime=5):
                     # reset number of ticks left for all jobs (just for lower jobs?)
                     # add to highest run queue (if not doing I/O)
                     for j in range(numJobs):
-                        # print('-> Boost %d (timeLeft %d)' % (j, job[j]['timeLeft']))
+                        print('-> Boost %d (timeLeft %d)' % (j, job[j]['timeLeft']))
                         if job[j]['timeLeft'] > 0:
-                            # print('-> FinalBoost %d (timeLeft %d)' % (j, job[j]['timeLeft']))
+                            print('-> FinalBoost %d (timeLeft %d)' % (j, job[j]['timeLeft']))
                             job[j]['currCore'] = qcores
                             job[j]['currPri']   = hiQueue
                             job[j]['ticksLeft'] = quantum[hiQueue]
                             job[j]['allotLeft'] = allotment[hiQueue]
                             print('  BOOST', j, ' ticks:', job[j]['ticksLeft'], ' allot:', job[j]['allotLeft'])
-                    # print('BOOST END: QUEUES look like:', queue)
+                    print('BOOST END: QUEUES look like:', queue)
             # check for any I/Os done
             if currTime in ioDone:
                 for (j, type) in ioDone[currTime]:

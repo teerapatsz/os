@@ -12,13 +12,22 @@ p {
     font-family: Pixelify Sans;
 }
 body {
-    background-color: white;
-    
+    background-color: black;
 }
 
-#plot {
+.scripts{
+    display:flex;
+    justify-content:center;
+    align-items: center;
+}
+
+.container {
     display:flex;
     justify-content: center;
     align-items: center ;
+    background-color: black;
+    justify-content:center;
+    align-items: center;
+    
 }
 
