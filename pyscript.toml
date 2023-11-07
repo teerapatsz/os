@@ -1,0 +1,3 @@
+packages = ["arrr","numpy", "matplotlib"]
+[[fetch]]
+files = ["multicoremlfqs.py"]

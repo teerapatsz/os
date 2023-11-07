@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title> Celsius To Fahrenheit </title>
+    
+    <!-- Pyscript -->
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <!-- <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" /> -->
+    
+    <!-- bootstrap for styling , Pyscript can also be used for styling instead of bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <style>
+    body {
+        background-color: #fcfcfc;
+        padding-top: 55px;
+        min-height: 100vh;
+        margin:0;
+        display:flex;
+        flex-direction:column;
+      }
+    </style>  
+    <py-env>
+        - matplotlib
+        - numpy
+        - paths:
+            - ./multicoremlfqs.py
+    </py-env>
+</head>
+<body>
+
+<!-- write your Python code in py-script tag -->
+<py-script output="plot">
+from js import document,alert
+import matplotlib.pyplot as plt
+import numpy as np
+from multicoremlfqs import * 
+        
+def convert(*ags, **kws):
+    
+    job = document.getElementById('input1').value;
+    iquantum = document.getElementById('input2').value;
+    iallotment = document.getElementById('input3').value;
+    boost = document.getElementById('input4').value;
+    ioTime = document.getElementById('input5').value;
+    pyscript.write("Fahrenheit1",job)    
+    pyscript.write("Fahrenheit2",iquantum)    
+    pyscript.write("Fahrenheit3",iallotment)    
+    pyscript.write("Fahrenheit4",boost)  
+    pyscript.write("Fahrenheit5",ioTime)    
+    
+    #นับจำนวนงานและเก็บไว้ในarray task_times
+    task_times=[]
+    timeCPU = 0
+    <!-- job = input("enter : ")
+    iquantum = input("enter : ")
+    iallotment = input("enter : ")
+    boost = input("enter : ")
+    ioTime = input("enter : ") -->
+    <!-- job = input1
+    iquantum = input2
+    iallotment = input3
+    boost = input4
+    ioTime = input5 -->
+      
+    if (job == '') or (iquantum == '') or (iallotment == '') or (boost == '') or (ioTime == '') :
+        x=mlfq_multicore()
+        jobs = 3
+    else :
+        x=mlfq_multicore(int(job),int(iquantum),int(iallotment),int(boost),int(ioTime))
+        jobs = int(job)
+    
+    # x=mlfq_multicore(job)
+    
+    for i in range (0,jobs):
+        timeCPU = x[0][i]['runTime']
+        #timeCPU=x[1][i]['currTimeCore']
+        task_times.append(timeCPU)
+    
+    # for j in range(0,job):
+    #     print(j," ", x[0][j]['currCore'],"",x[0][j]['runTime']) #การหา job
+    #     #print(x[0][j]['runTime'])    
+    
+    # จำนวน CPU cores
+    num_cores = 4
+    cpu_names = [f'CPU {i+1}' for i in range(num_cores)]
+    
+    # เวลาที่แต่ละงานใช้เสร็จ (ในหน่วยเวลา)
+    # เหลือทำ task_times ให้รับค่าจากเพื่อนได้
+    #task_times = [200, 84, 76, 58, 110, 75, 85, 56, 210, 312]
+    count =1
+    tasks =[]
+    text = "Task "
+    labels = ['CPU1','CPU2','CPU3','CPU4']
+    
+    #นับจำนวนงานที่อยู่ในlist
+    for i in task_times:
+        count+=1
+        
+    #ชื่องานแต่ละงาน
+    for j in range(0,count):
+            result = text + str(j)
+            tasks.append(result)
+        
+    
+    # สร้างกราฟ
+    plt.figure(figsize=(10, 6))
+    bottom = [0] * num_cores
+    assignments = {}
+    
+    for task, time in zip(tasks, task_times):
+        # ค้นหา CPU core ที่ว่างที่สุด
+        min_core = min(range(num_cores), key=lambda core: bottom[core])
+        
+        # กำหนดงานให้ CPU core ที่ว่างที่สุด
+        assignments[task] = min_core
+        
+        # สร้างกราฟแท่งเด้อ
+        plt.bar(min_core, time, bottom=bottom[min_core], label=task)
+        bottom[min_core] += time
+    
+    plt.xlabel('CPU')
+    plt.ylabel('Time (units)')
+    plt.title('Multi-thread Multi-CPU Task Execution Time')
+    plt.legend(loc='upper right')
+    
+    # เพิ่มชื่อ CPU ในแต่ละแท่ง
+    plt.xticks(range(num_cores), labels)
+    
+    # พิมพ์ข้อมูลการกำหนดงานในแต่ละ CPU
+    # print("Task assignments to CPU cores:")
+    # for task, core in assignments.items():
+    #     print(f"{task} -> CPU {core + 1}")
+        
+    #plt.yticks(range(1, 30+1)) เว้นไปก่อนไม่รู้จะเขียนยังไงให้พอดี
+    display(plt)
+</py-script>    
+
+    <div class="container">
+        
+        <h1 class="text-center">
+            Celsius to Fahrenheit Converter
+        </h1>
+        <br />
+        <h3>Enter:</h3>
+        <input id="input1" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Temp in input" /></p>
+        <h3>Enter:</h3>
+        <input id="input2" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Temp in input" /></p>
+        <h3>Enter:</h3>
+        <input id="input3" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Temp in input" /></p>
+        <h3>Enter:</h3>
+        <input id="input4" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Temp in input" /></p>
+        <h3>Enter:</h3>
+        <input id="input5" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Enter Temp in input" /></p>
+        <button id="convert" type="submit"  class="btn btn-info" pys-onClick="convert">Convert</button>
+      
+
+
+        <h4>Result:</h4>
+        <textarea id="Fahrenheit1" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
+        <textarea id="Fahrenheit2" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
+        <textarea id="Fahrenheit3" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
+        <textarea id="Fahrenheit4" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
+        <textarea id="Fahrenheit5" class="form-control" rows="2" aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Result"></textarea></p>
+    
+        <div id="plot"></div>
+    </div>    
+    
+    </body>
+    </html>    

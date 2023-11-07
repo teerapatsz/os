@@ -1,7 +1,3 @@
-from fastapi import FastAPI
-
-app=FastAPI()
-
-@app.get("/")
-def read_root() :
-    return()_
+currTime = 5
+j=10
+print(j)
